@@ -25,13 +25,6 @@ public class Script : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if(ataq==true){
-            cont++;
-        }
-        if(cont>45){
-            am.SetInteger("anim",0);
-            cont=0;
-        }
         if(Input.GetKey(KeyCode.RightArrow)){
             rb.velocity=new Vector2(5,rb.velocity.y);
             sr.flipX=false;
@@ -68,6 +61,19 @@ public class Script : MonoBehaviour
         if(Input.GetKey(KeyCode.Z)&&en_suelo==true){
             am.SetInteger("anim",1);
             ataq=true;
+            cont = 0;
+        }
+        if (ataq == true)
+        {
+            rb.velocity = new Vector2((float)(rb.velocity.y *-1), rb.velocity.y);
+            cont++;
+        }
+        Debug.Log(cont);
+        if (cont > 150)
+        {
+            ataq = false;
+            am.SetInteger("anim", 0);
+            cont = 0;
         }
     }
 
