@@ -12,13 +12,16 @@ public class Script : MonoBehaviour
     bool ataq=false;
     int cont=0;
     bool en_suelo=true;
+    public int vel_cam = 5;
+    public int vel_run = 10;
+    public int potencia = 10;
     // Start is called before the first frame update
     void Start()
     {
         rb=GetComponent<Rigidbody2D>();
         bc=GetComponent<BoxCollider2D>();
         sr=GetComponent<SpriteRenderer>();
-        tf=GetComponent<Transform>();
+        //tf=GetComponent<Transform>();
         am=GetComponent<Animator>();
     }
 
@@ -26,36 +29,44 @@ public class Script : MonoBehaviour
     void Update()
     {
         if(Input.GetKey(KeyCode.RightArrow)){
-            rb.velocity=new Vector2(5,rb.velocity.y);
+            rb.velocity=new Vector2(vel_cam, rb.velocity.y);
             sr.flipX=false;
             if(en_suelo==true){
-            am.SetInteger("anim",3);
+            am.SetInteger("anim",4);
             }
-            if(Input.GetKey(KeyCode.X))
-                rb.velocity=new Vector2(10,rb.velocity.y);
+            if (Input.GetKey(KeyCode.X) && en_suelo == true)
+            {
+                am.SetInteger("anim", 3);
+                rb.velocity = new Vector2(vel_run, rb.velocity.y);
+            }
         }
         if(Input.GetKeyUp(KeyCode.RightArrow)){
             rb.velocity=new Vector2(1,rb.velocity.y);
-            am.SetInteger("anim",0);
+            if (en_suelo == true)
+                am.SetInteger("anim",0);
         }
         if(Input.GetKey(KeyCode.LeftArrow)){
-            rb.velocity=new Vector2(-5,rb.velocity.y);
+            rb.velocity=new Vector2(-vel_cam, rb.velocity.y);
             sr.flipX=true;
             if(en_suelo==true){
-            am.SetInteger("anim",3);
+            am.SetInteger("anim",4);
             }
-            if(Input.GetKey(KeyCode.X))
-                rb.velocity=new Vector2(-10,rb.velocity.y);
+            if (Input.GetKey(KeyCode.X)&&en_suelo==true)
+            {
+                am.SetInteger("anim", 3);
+                rb.velocity = new Vector2(-vel_run, rb.velocity.y);
+            }
         }
         if(Input.GetKeyUp(KeyCode.LeftArrow)){
             rb.velocity=new Vector2(-1,rb.velocity.y);
-            am.SetInteger("anim",0);
+            if(en_suelo==true)
+                am.SetInteger("anim",0);
         }
         if(Input.GetKey(KeyCode.Space)){
-            if(en_suelo==true){
+            if(en_suelo==true&&ataq==false){
                 am.SetInteger("anim",2);
                 en_suelo=false;
-                rb.AddForce(new Vector2(0,7),ForceMode2D.Impulse);
+                rb.AddForce(new Vector2(0,potencia),ForceMode2D.Impulse);
             }
         }
         if(Input.GetKey(KeyCode.Z)&&en_suelo==true){
@@ -68,8 +79,7 @@ public class Script : MonoBehaviour
             rb.velocity = new Vector2((float)(rb.velocity.y *-1), rb.velocity.y);
             cont++;
         }
-        Debug.Log(cont);
-        if (cont > 150)
+        if (cont > 150&&en_suelo==true)
         {
             ataq = false;
             am.SetInteger("anim", 0);
@@ -77,9 +87,14 @@ public class Script : MonoBehaviour
         }
     }
 
-    void OnCollisionEnter2D(){
-        am.SetInteger("anim",0);
-        en_suelo=true;
+    void OnCollisionEnter2D()
+    {
+        am.SetInteger("anim", 0);
+        en_suelo = true;
+    }
+    void OnTriggerEnter2D(Collider2D other)
+    {
+        //acá cosas
     }
 
 }
