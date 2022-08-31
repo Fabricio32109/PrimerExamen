@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class camara : MonoBehaviour
 {
-    public int smootherFactor = 1;
+    public float smootherFactor = 1;
     public Vector3 offset = new Vector3(4,2,-10);
     public GameObject target;
 

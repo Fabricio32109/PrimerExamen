@@ -62,14 +62,20 @@ public class Script : MonoBehaviour
             if(en_suelo==true)
                 am.SetInteger("anim",0);
         }
-        if(Input.GetKey(KeyCode.Space)){
-            if(en_suelo==true&&ataq==false){
-                am.SetInteger("anim",2);
-                en_suelo=false;
-                rb.AddForce(new Vector2(0,potencia),ForceMode2D.Impulse);
+        if (Input.GetKey(KeyCode.Space))
+        {
+            if (en_suelo == true && ataq == false)
+            {
+                am.SetInteger("anim", 2);
+                en_suelo = false;
+                rb.AddForce(new Vector2(0, potencia), ForceMode2D.Impulse);
             }
         }
-        if(Input.GetKey(KeyCode.Z)&&en_suelo==true){
+        if (Input.GetKeyUp(KeyCode.Space))
+        {
+            rb.velocity = new Vector2(rb.velocity.x,rb.velocity.y/10);
+        }
+        if (Input.GetKey(KeyCode.Z)&&en_suelo==true){
             am.SetInteger("anim",1);
             ataq=true;
             cont = 0;

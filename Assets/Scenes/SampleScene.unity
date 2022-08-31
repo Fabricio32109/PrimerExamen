@@ -332,7 +332,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   smootherFactor: 1
-  offset: {x: 7, y: 3, z: -10}
+  offset: {x: 5, y: 2, z: -10}
   target: {fileID: 1645811253}
 --- !u!1 &1645811253
 GameObject:
@@ -369,7 +369,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   vel_cam: 5
   vel_run: 10
-  potencia: 10
+  potencia: 6
 --- !u!50 &1645811255
 Rigidbody2D:
   serializedVersion: 4
