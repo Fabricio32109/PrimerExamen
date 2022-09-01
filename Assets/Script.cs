@@ -12,9 +12,14 @@ public class Script : MonoBehaviour
     bool ataq=false;
     int cont=0;
     bool en_suelo=true;
+    bool doblesalto = false;
+    bool interr = true;
     public int vel_cam = 5;
     public int vel_run = 10;
     public int potencia = 10;
+    public int seg_potencia = 10;
+    int cart = 0;
+    Vector2 respawn = new Vector2();
     // Start is called before the first frame update
     void Start()
     {
@@ -23,6 +28,7 @@ public class Script : MonoBehaviour
         sr=GetComponent<SpriteRenderer>();
         //tf=GetComponent<Transform>();
         am=GetComponent<Animator>();
+        respawn = new Vector2(-7,-3);
     }
 
     // Update is called once per frame
@@ -64,7 +70,12 @@ public class Script : MonoBehaviour
         }
         if (Input.GetKey(KeyCode.Space))
         {
-            if (en_suelo == true && ataq == false)
+            if (en_suelo == false && doblesalto == true)
+            {
+                doblesalto = false;
+                rb.AddForce(new Vector2(0, seg_potencia), ForceMode2D.Impulse);
+            }
+            if (en_suelo == true && ataq == false&&doblesalto==false)
             {
                 am.SetInteger("anim", 2);
                 en_suelo = false;
@@ -74,6 +85,11 @@ public class Script : MonoBehaviour
         if (Input.GetKeyUp(KeyCode.Space))
         {
             rb.velocity = new Vector2(rb.velocity.x,rb.velocity.y/10);
+            if (interr == true)
+            {
+                doblesalto = true;
+                interr = false;
+            }
         }
         if (Input.GetKey(KeyCode.Z)&&en_suelo==true){
             am.SetInteger("anim",1);
@@ -97,10 +113,20 @@ public class Script : MonoBehaviour
     {
         am.SetInteger("anim", 0);
         en_suelo = true;
+        doblesalto = false;
+        interr = true;
     }
     void OnTriggerEnter2D(Collider2D other)
     {
-        //acá cosas
+        if (other.tag == "Respawn" &&cart<2)
+        {
+            cart++;
+            respawn = new Vector2(rb.transform.position.x, rb.transform.position.y);
+        }
+        if (other.tag == "Finish")
+        {
+            rb.transform.position = respawn;
+        }
     }
 
 }
