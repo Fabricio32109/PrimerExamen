@@ -18,22 +18,38 @@ public class Script : MonoBehaviour
     public int vel_run = 10;
     public int potencia = 10;
     public int seg_potencia = 10;
+    public int balas;
+    public GameObject Bala;
+    gameManager gm;
+    bool muerto = false;
     int cart = 0;
     Vector2 respawn = new Vector2();
     // Start is called before the first frame update
     void Start()
     {
-        rb=GetComponent<Rigidbody2D>();
+        gm = FindObjectOfType<gameManager>();
+        rb =GetComponent<Rigidbody2D>();
         bc=GetComponent<BoxCollider2D>();
         sr=GetComponent<SpriteRenderer>();
-        //tf=GetComponent<Transform>();
+        tf=GetComponent<Transform>();
         am=GetComponent<Animator>();
         respawn = new Vector2(-7,-3);
+        sr.flipX = false;
     }
 
     // Update is called once per frame
     void Update()
     {
+        if (en_suelo == true && muerto==false)
+        {
+            am.SetInteger("anim", 0);
+        }
+        if(muerto==false)
+            rb.velocity = new Vector2(vel_run, rb.velocity.y);
+        //else
+        //    rb.velocity = new Vector2(0, rb.velocity.y);
+
+        /*
         if(Input.GetKey(KeyCode.RightArrow)){
             rb.velocity=new Vector2(vel_cam, rb.velocity.y);
             sr.flipX=false;
@@ -67,9 +83,10 @@ public class Script : MonoBehaviour
             rb.velocity=new Vector2(-1,rb.velocity.y);
             if(en_suelo==true)
                 am.SetInteger("anim",0);
-        }
-        if (Input.GetKey(KeyCode.Space))
+        }*/
+        if (Input.GetKey(KeyCode.Space) && muerto == false)
         {
+
             if (en_suelo == false && doblesalto == true)
             {
                 doblesalto = false;
@@ -77,10 +94,27 @@ public class Script : MonoBehaviour
             }
             if (en_suelo == true && ataq == false&&doblesalto==false)
             {
-                am.SetInteger("anim", 2);
+                am.SetInteger("anim", 1);
+                //am.SetInteger("anim", 2);
                 en_suelo = false;
                 rb.AddForce(new Vector2(0, potencia), ForceMode2D.Impulse);
             }
+        }
+        if (Input.GetKeyDown(KeyCode.E)&&muerto==false)
+        {
+            //disparo
+            if (gm.getbalas() > 0)
+            {
+                var gb = Instantiate(Bala, new Vector2(tf.position.x + 1, tf.position.y), Quaternion.identity) as GameObject;
+                gm.perderbalas();
+            }
+        }
+        if (gm.getvidas()<=0)
+        {
+            muerto = true;
+            Destroy(rb);
+            bc.enabled = false;
+            am.SetInteger("anim", 2);
         }
         if (Input.GetKeyUp(KeyCode.Space))
         {
@@ -109,18 +143,24 @@ public class Script : MonoBehaviour
         }
     }
 
-    void OnCollisionEnter2D()
+    void OnCollisionEnter2D(Collision2D other)
     {
-        am.SetInteger("anim", 0);
         en_suelo = true;
         doblesalto = false;
         interr = true;
+
+        if (other.gameObject.tag == "Enemy")
+        {
+            gm.perdervidas();
+            //am.SetInteger("anim", 2);
+            //muerto = true;
+        }
     }
     void OnTriggerEnter2D(Collider2D other)
     {
-        if (other.tag == "Respawn" &&cart<2)
+        if (other.tag == "Respawn" )
         {
-            cart++;
+            other.enabled = false;
             respawn = new Vector2(rb.transform.position.x, rb.transform.position.y);
         }
         if (other.tag == "Finish")
