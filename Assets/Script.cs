@@ -22,7 +22,7 @@ public class Script : MonoBehaviour
     public GameObject Bala;
     gameManager gm;
     bool muerto = false;
-    int cart = 0;
+    //int cart = 0;
     Vector2 respawn = new Vector2();
     // Start is called before the first frame update
     void Start()
@@ -35,6 +35,7 @@ public class Script : MonoBehaviour
         am=GetComponent<Animator>();
         respawn = new Vector2(-7,-3);
         sr.flipX = false;
+        //loadgame();
     }
 
     // Update is called once per frame

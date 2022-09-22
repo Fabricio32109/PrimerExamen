@@ -1,6 +1,10 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
+using System.IO;
+using System.Runtime.Serialization.Formatters.Binary;
+using UnityEngine.SceneManagement;
 
 public class script_real : MonoBehaviour
 {
@@ -18,15 +22,20 @@ public class script_real : MonoBehaviour
     public int vel_run = 10;
     public int potencia = 10;
     public int seg_potencia = 10;
-    public int balas;
+    //public int balas;
     public GameObject Bala;
     gameManager gm;
     bool muerto = false;
-    int cart = 0;
+    AudioSource aus;
+    public AudioClip salto;
+    public AudioClip coin;
+    public GameObject monedas;
+    //int cart = 0;
     Vector2 respawn = new Vector2();
     // Start is called before the first frame update
     void Start()
     {
+        aus= GetComponent<AudioSource>();
         gm = FindObjectOfType<gameManager>();
         rb = GetComponent<Rigidbody2D>();
         bc = GetComponent<BoxCollider2D>();
@@ -35,7 +44,7 @@ public class script_real : MonoBehaviour
         am = GetComponent<Animator>();
         respawn = new Vector2(-7, -3);
         sr.flipX = false;
-
+        loadgame();
     }
 
     // Update is called once per frame
@@ -86,11 +95,13 @@ public class script_real : MonoBehaviour
 
             if (en_suelo == false && doblesalto == true)
             {
+                aus.PlayOneShot(salto);
                 doblesalto = false;
                 rb.AddForce(new Vector2(0, seg_potencia), ForceMode2D.Impulse);
             }
             if (en_suelo == true && ataq == false && doblesalto == false)
             {
+                aus.PlayOneShot(salto);
                 am.SetInteger("anim", 1);
                 //am.SetInteger("anim", 2);
                 en_suelo = false;
@@ -100,17 +111,28 @@ public class script_real : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.E) && muerto == false)
         {
             //disparo
+            if (gm.getbalas() == -1)
+            {
+                var gb = Instantiate(Bala, new Vector2(tf.position.x + 1, tf.position.y), Quaternion.identity) as GameObject;
+            }
+            else 
             if (gm.getbalas() > 0)
             {
                 var gb = Instantiate(Bala, new Vector2(tf.position.x + 1, tf.position.y), Quaternion.identity) as GameObject;
                 gm.perderbalas();
             }
+
+        }
+        if (Input.GetKeyDown(KeyCode.P))
+        {
+            SceneManager.LoadScene("SampleScene");
+
         }
         if (Input.GetKey(KeyCode.C) && en_suelo == false)
         {
             rb.gravityScale = (float)0.05;
         }
-        if (Input.GetKeyUp(KeyCode.C) && en_suelo == false)
+        if (Input.GetKeyUp(KeyCode.C) )
         {
             rb.gravityScale = 1;
         }
@@ -172,12 +194,25 @@ public class script_real : MonoBehaviour
     {
         if (other.tag == "Respawn")
         {
-            other.enabled = false;
-            respawn = new Vector2(rb.transform.position.x, rb.transform.position.y);
+            savegame();
+            //other.enabled = false;
+            //respawn = new Vector2(rb.transform.position.x, rb.transform.position.y);
         }
         if (other.tag == "Finish")
         {
             rb.transform.position = respawn;
+        }
+        if (other.tag == "mon_oro")
+        {
+            aus.PlayOneShot(coin);
+            Destroy(other.gameObject);
+            gm.ganpuntos(20);
+        }
+        if (other.tag == "mon_plata")
+        {
+            aus.PlayOneShot(coin);
+            Destroy(other.gameObject);
+            gm.ganpuntos(10);
         }
     }
     void OnTriggerStay2D(Collider2D other)
@@ -210,4 +245,44 @@ public class script_real : MonoBehaviour
         rb.gravityScale = 1;
 
     }
+    public void savegame()
+    {
+        var filePath = Application.persistentDataPath + "/save.dat";
+        FileStream file;
+        if (File.Exists(filePath))
+            file = File.OpenWrite(filePath);
+        else
+            file = File.Create(filePath);
+        GameData data = new GameData
+        {
+            score = gm.getpuntos(),
+            x = tf.position.x,
+            y = tf.position.y,
+            //mon = monedas,
+
+        };
+        BinaryFormatter bf = new BinaryFormatter();
+        bf.Serialize(file, data);
+        file.Close();
+    }
+    public void loadgame()
+    {
+        var filePath = Application.persistentDataPath + "/save.dat";
+        FileStream file;
+        if (File.Exists(filePath))
+            file = File.OpenRead(filePath);
+        else
+        {
+            Debug.Log("No hay naide");
+            return;
+        }
+        BinaryFormatter bf = new BinaryFormatter();
+        GameData data = (GameData)bf.Deserialize(file);
+        file.Close();
+        gm.setscore(data.score);
+        tf.position = new Vector2((float)data.x,(float)data.y);
+        //monedas= data.mon;
+    }
 }
+
+

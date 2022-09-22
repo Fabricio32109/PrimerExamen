@@ -7,6 +7,8 @@ TagManager:
   - Enemy
   - Escalera
   - platform
+  - mon_plata
+  - mon_oro
   layers:
   - Default
   - TransparentFX

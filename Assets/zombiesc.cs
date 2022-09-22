@@ -5,6 +5,7 @@ using UnityEngine;
 public class zombiesc : MonoBehaviour
 {
     Rigidbody2D rb;
+    public int vel = 6;
     // Start is called before the first frame update
     void Start()
     {
@@ -15,7 +16,12 @@ public class zombiesc : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        rb.velocity = new Vector2(-6, rb.velocity.y);
+        rb.velocity = new Vector2(vel, rb.velocity.y);
 
+    }
+    void OnTriggerEnter2D(Collider2D other)
+    {
+        if(other.tag!="mon_oro"&&other.tag!="mon_plata")
+        vel *= -1;
     }
 }

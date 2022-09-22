@@ -1,7 +1,11 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 using TMPro;
+using System.IO;
+using System.Runtime.Serialization.Formatters.Binary;
+
 
 public class gameManager : MonoBehaviour
 {
@@ -11,8 +15,8 @@ public class gameManager : MonoBehaviour
 
     int score;
     int lives = 3;
-    int balas=5;
-        // Start is called before the first frame update
+    int balas = -1;
+    // Start is called before the first frame update
     void Start()
     {
         printlives();
@@ -43,10 +47,18 @@ public class gameManager : MonoBehaviour
     {
         score += pts;
         printscore();
+    }public void setscore(int pts)
+    {
+        score = pts;
+        printscore();
     }
     public int getvidas()
     {
         return lives;
+    }
+    public int getpuntos()
+    {
+        return score;
     }
     void printlives()
     {
@@ -60,4 +72,5 @@ public class gameManager : MonoBehaviour
     {
         balasTexto.text = "Balas: " + balas;
     }
+    
 }
