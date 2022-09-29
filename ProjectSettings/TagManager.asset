@@ -9,6 +9,9 @@ TagManager:
   - platform
   - mon_plata
   - mon_oro
+  - bal1
+  - bal2
+  - bal3
   layers:
   - Default
   - TransparentFX
