@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using TMPro;
 
 public class ninjascript : MonoBehaviour
 {
@@ -13,6 +14,9 @@ public class ninjascript : MonoBehaviour
     public float potencia;
     bool en_suelo = true;
     bool ataq = false;
+    public TMP_Text arma;
+    public GameObject Bala;
+    public GameObject Katana;
     // Start is called before the first frame update
     void Start()
     {
@@ -27,64 +31,62 @@ public class ninjascript : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-
-        if (en_suelo == true)
+        if (en_suelo == true&&vel_cam==0)
         {
             am.SetInteger("anim", 0);
-        }
-
-
-        if (Input.GetKey(KeyCode.RightArrow))
+        }else if (en_suelo == true)
         {
-            rb.velocity = new Vector2(vel_cam, rb.velocity.y);
-            sr.flipX = false;
-            if (en_suelo == true)
-            {
-                am.SetInteger("anim", 1);
-            }
+            am.SetInteger("anim", 1);
         }
-        if (Input.GetKeyUp(KeyCode.RightArrow))
+        rb.velocity = new Vector2(vel_cam, rb.velocity.y);
+    }
+    public void der()
+    {
+        vel_cam = 9;
+        sr.flipX = false;
+        if (en_suelo == true)
         {
-            rb.velocity = new Vector2(vel_cam / 10, rb.velocity.y);
-            sr.flipX = false;
-            if (en_suelo == true)
-            {
-                am.SetInteger("anim", 0);
-            }
+            am.SetInteger("anim", 1);
         }
-        if (Input.GetKey(KeyCode.LeftArrow))
+    }
+    public void izq()
+    {
+        vel_cam = -9;
+        sr.flipX = true;
+        if (en_suelo == true)
         {
-            rb.velocity = new Vector2(-vel_cam, rb.velocity.y);
-            sr.flipX = true;
-            if (en_suelo == true)
-            {
-                am.SetInteger("anim", 1);
-            }
+            am.SetInteger("anim", 1);
         }
-        if (Input.GetKeyUp(KeyCode.LeftArrow))
+    }
+    public void soltar()
+    {
+        vel_cam = 0;
+    }
+    public void saltar()
+    {
+        if (en_suelo == true && ataq == false)
         {
-            rb.velocity = new Vector2(-vel_cam / 10, rb.velocity.y);
-            sr.flipX = true;
-            if (en_suelo == true)
-            {
-                am.SetInteger("anim", 0);
-            }
+            en_suelo = false;
+            rb.AddForce(new Vector2(0, potencia), ForceMode2D.Impulse);
+            am.SetInteger("anim", 2);
         }
-        if (Input.GetKeyDown(KeyCode.Space))
+    }
+    public void solsalto()
+    {
+        if (en_suelo == false)
         {
-            if (en_suelo == true && ataq == false)
-            {
-                en_suelo = false;
-                rb.AddForce(new Vector2(0, potencia), ForceMode2D.Impulse);
-                am.SetInteger("anim", 2);
-            }
+            rb.velocity = new Vector2(rb.velocity.x, rb.velocity.y / 10);
         }
-        if (Input.GetKeyUp(KeyCode.Space))
+    }
+    public void ataque()
+    {
+        if (arma.text == "Katana")
         {
-            if (en_suelo == true && ataq == false)
-            {
-                rb.velocity = new Vector2(rb.velocity.x, rb.velocity.y / 10);
-            }
+            var gb = Instantiate(Katana, new Vector2(tf.position.x + 1, tf.position.y), Quaternion.identity) as GameObject;
+        }
+        else
+        {
+            var gb = Instantiate(Bala, new Vector2(tf.position.x + 1, tf.position.y), Quaternion.identity) as GameObject;
         }
     }
     void OnCollisionEnter2D(Collision2D other)

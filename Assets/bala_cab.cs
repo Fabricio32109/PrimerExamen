@@ -25,9 +25,10 @@ public class bala_cab : MonoBehaviour
     {
         if (other.tag == "Enemy")
         {
+            /*
             Destroy(other.gameObject);//eliminacion del objeto
             Destroy(this.gameObject);//eliminacion del objeto
-            gm.ganpuntos(10);
+            gm.ganpuntos(10);*/
         }
     }
 }
